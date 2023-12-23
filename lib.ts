@@ -1,4 +1,4 @@
 export * from "./src/atomixComponent";
-export * from "./src/atomixContext";
-export * from "./src/hook";
+export * from "./src/atomixState";
+export * from "./src/cycle";
 export * from "./src/webcomponents";

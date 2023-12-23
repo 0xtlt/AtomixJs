@@ -42,7 +42,7 @@ export function defineWebComponent(
 
       disconnectedCallback() {
         this.instance?.onDestroy?.();
-        this.instance?.clearHooks?.();
+        this.instance?.clearCycles?.();
 
         if (this.observer) {
           this.observer.disconnect();

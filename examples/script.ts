@@ -1,6 +1,11 @@
-import { Component, atomixContext, WebLazyComponent } from "../lib";
+import {
+  Component,
+  WebLazyComponent,
+  WebComponent,
+  useAtomixState,
+} from "../lib";
 
-const [, setName, subscribeName] = atomixContext("John", "local");
+const [, setName, subscribeName] = useAtomixState("John");
 
 @WebLazyComponent("atomix-component")
 class MyComponent extends Component {
@@ -14,13 +19,13 @@ class MyComponent extends Component {
       if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
     });
 
-    this.hook(() => {
+    this.cycle(() => {
       return subscribeName((name) => {
         this.query<HTMLInputElement>("input")!.value = name;
       });
     });
 
-    this.hook(async () => {
+    this.cycle(async () => {
       const i = setInterval(() => {
         this.printDate();
       }, 1000);

@@ -1,8 +1,8 @@
-import { type AddHookFn } from "./hook";
+import { type AddCycleFn } from "./cycle";
 
 export class Component<Element extends HTMLElement = HTMLElement> {
-  // Hooks system
-  private _hooks: Array<() => any> = [];
+  // Cycles system
+  private _cycles: Array<() => any> = [];
 
   constructor(private el: Element) {}
 
@@ -11,25 +11,41 @@ export class Component<Element extends HTMLElement = HTMLElement> {
   onsubmit?(ev: Event): void;
   onchange?(ev: Event): void;
 
-  // Hooks
-  hook(cb: AddHookFn) {
+  // Cycles
+  cycle(cb: AddCycleFn) {
     let fn = cb();
 
     if (fn instanceof Promise) {
-      fn.then((fn) => this._hooks.push(fn));
+      fn.then((fn) => this._cycles.push(fn));
     } else {
-      this._hooks.push(fn);
+      this._cycles.push(fn);
     }
   }
 
-  clearHooks() {
-    this._hooks.map((cb) => {
+  clearCycles() {
+    this._cycles.map((cb) => {
       const res = cb();
       if (res instanceof Promise) {
         res.then(() => null);
       }
     });
-    this._hooks = [];
+    this._cycles = [];
+  }
+
+  // TODO: finish this
+  static attach(element: HTMLElement | string) {
+    const el =
+      typeof element === "string"
+        ? document.querySelector<HTMLElement>(element)
+        : element;
+
+    if (!el) {
+      throw new Error(`Element not found: ${element}`);
+    }
+
+    const component = new this(el);
+    component.start?.();
+    return component;
   }
 
   // Lifecycle

@@ -1,0 +1,74 @@
+---
+title: AtomixJs State System
+description: Understanding the State Management System in AtomixJs.
+---
+
+The AtomixJs State System provides a comprehensive solution for state management within applications. It offers both in-memory and persistent storage options, designed for flexible and efficient state management.
+
+### State Management in AtomixJs
+
+#### Using In-Memory State with `useAtomixState`
+
+`useAtomixState` provides an interface for managing state that is stored in memory (RAM). It is ideal for temporary state management within components.
+
+```typescript
+export function useAtomixState<Type>(initialValue: Type);
+```
+
+- `initialValue`: The initial value of the state.
+
+#### Using Persistent State with `useAtomixBrowserState`
+
+`useAtomixBrowserState` is tailored for managing state with persistence in the browser's storage, either in localStorage or sessionStorage.
+
+```typescript
+export function useAtomixBrowserState<Type>(
+  key: string,
+  initialValue: Type,
+  storageType: StorageType
+);
+```
+
+- `key`: The key for storing the state.
+- `initialValue`: The initial value of the state.
+- `storageType`: The type of browser storage ('local' or 'session').
+
+### Key Features
+
+- **Flexibility**: Easy switching between in-memory and persistent storage.
+- **Consistency**: Unified API for different storage types.
+- **Reactivity**: Real-time state updates and subscriptions.
+
+### Example Usage
+
+Below is an example demonstrating how to use `useAtomixState` in a component:
+
+```typescript
+const [getName, setName, subscribeName] = useAtomixState("John");
+
+@WebComponent("atomix-component")
+class MyComponent2 extends Component {
+  start() {
+    this.query<HTMLInputElement>("input")?.addEventListener("input", (ev) => {
+      if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
+    });
+
+    this.cycle(() => {
+      return subscribeName((name) => {
+        this.query<HTMLInputElement>("input")!.value = name;
+      });
+    });
+  }
+}
+```
+
+```html
+<atomix-component>
+  <input type="text" />
+</atomix-component>
+
+<atomix-component>
+  <input type="text" />
+  <!-- This input will be updated in real-time -->
+</atomix-component>
+```

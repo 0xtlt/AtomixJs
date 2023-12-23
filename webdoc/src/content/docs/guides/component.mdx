@@ -1,0 +1,79 @@
+---
+title: AtomixJs component
+description: AtomixJs component documentation.
+---
+
+AtomixJs components are like react components with lifecycle methods. They are used to create reusable UI elements and they are lightweight (_less than 1kb_).
+
+## Creating a component
+
+We can create a component by extending the `Component` class and implementing the `start` method.\
+This method is called when the component is mounted during the first render in the Component's lifecycle.
+
+```ts
+import { Component } from "atomixjs";
+
+class MyComponent extends Component {
+  start() {
+    console.log("start");
+  }
+}
+```
+
+## Attaching a component to a web component
+
+We can attach a component to a web component by using the `attach` method.
+
+```html
+<div id="component">...</div>
+```
+
+```ts
+MyComponent.attach("#component");
+```
+
+## Framework auto-attach
+
+### WebComponent decorator
+
+A component can be attached to a web component by using the `WebComponent` decorator.
+
+```ts
+import { Component, WebComponent } from "atomixjs";
+
+@WebComponent("atomix-component")
+class MyComponent extends Component {
+  start() {
+    console.log("start");
+  }
+}
+```
+
+```html
+<atomix-component>...</atomix-component>
+```
+
+### WebLazyComponent decorator
+
+A component can be attached to a web component by using the `WebLazyComponent` decorator.\
+This decorator is used to defer the component's initialization until the web component is on the screen.\
+This is useful for intensive computations components like sliders, 3D models, etc.
+
+```ts
+import { Component, WebLazyComponent } from "atomixjs";
+
+@WebLazyComponent("atomix-component")
+class MyComponent extends Component {
+  start() {
+    console.log("start");
+  }
+}
+```
+
+```html
+<atomix-component>...</atomix-component>
+```
+
+:::danger
+This component should never be used if your component needs to be attached to a web component that is not on the screen.
+:::

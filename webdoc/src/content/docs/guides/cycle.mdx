@@ -1,0 +1,37 @@
+---
+title: AtomixJs Cycles System
+description: Understanding the Cycles System in AtomixJs Components.
+---
+
+The Cycles System in AtomixJs plays a crucial role in managing side effects within components, akin to lifecycle methods in traditional component-based frameworks. It enables the execution of code at specific points in a component's lifecycle, particularly during initialization and cleanup phases.
+
+### Using Cycles in Components
+
+#### The Cycle Method
+
+In AtomixJs, the `cycle` method is an integral part of a component's lifecycle management. It allows developers to define functions that are executed during different lifecycle stages of a component. These functions can optionally return a cleanup function, which is invoked when the component is being destroyed, ensuring efficient resource management.
+
+#### Clearing Cycles
+
+AtomixJs also includes functionality to clear all cycles associated with a component. This is vital for preventing memory leaks and ensuring that no residual effects persist after a component has been removed.
+
+### Example Usage
+
+Here's an example that demonstrates the use of a cycle in a component with `setInterval`:
+
+```ts
+class MyComponent extends Component {
+  start() {
+    this.cycle(() => {
+      const intervalId = setInterval(() => {
+        console.log("Interval tick");
+      }, 1000);
+
+      return () => {
+        clearInterval(intervalId);
+        console.log("Interval cleared on component destruction");
+      };
+    });
+  }
+}
+```

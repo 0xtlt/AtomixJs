@@ -1,0 +1,48 @@
+---
+title: AtomixJs Component Lifecycle
+description: Detailed documentation on the lifecycle of AtomixJs components.
+---
+
+Understanding the lifecycle of AtomixJs components is essential for cycleive component management, from initialization to destruction.
+
+### Component Initialization
+
+1. **Start Method**: The `start` method is invoked after the component is attached to the DOM. This is where you typically set up the initial state, bind event handlers, and perform initial actions such as fetching data or setting up listeners.
+
+   ```ts
+   start?(): void {
+     // Initial setup and actions when the component starts
+   }
+   ```
+
+### Event Handling and Cycles
+
+- **Event Handling**: The component responds to various events like clicks or changes through optional methods such as `onclick`, `onchange`, etc.
+
+  ```ts
+  onclick?(ev: Event): void {
+    // Handle click event
+  }
+  ```
+
+- [**Cycles Management**](../cycle/): The `cycle` and `clearCycles` methods, now protected, are used for managing lifecycle cycles.
+
+  ```ts
+  protected cycle(cb: AddCycleFn) {
+    // Adding a custom cycle
+  }
+
+  protected clearCycles() {
+    // Clearing cycles before component destruction
+  }
+  ```
+
+### Component Destruction
+
+1. **Cleanup (`onDestroy`)**: This method is invoked before the component is destroyed, ideal for cleanup and resource management.
+
+   ```ts
+   onDestroy?(): void {
+     // Cleanup logic
+   }
+   ```
