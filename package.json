@@ -1,10 +1,11 @@
 {
   "name": "atomixjs",
   "version": "0.0.1",
-  "module": "index.ts",
+  "module": "lib.js",
+  "main": "lib.js",
   "type": "module",
   "scripts": {
-    "build": "bun build index.ts --outfile=d.js --target=browser --minify-whitespace --minify-identifiers --minify-syntax",
+    "build": "bun build lib.ts --outfile=lib.js --target=browser --minify-whitespace --minify-identifiers --minify-syntax --sourcemap=inline",
     "dev": "bun build index.ts --outfile=d.js --target=browser --sourcemap=inline --watch",
     "buildExample": "bun build ./examples/script.ts --outfile=examples/script.js --target=browser --minify-whitespace --minify-identifiers --minify-syntax"
   },
