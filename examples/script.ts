@@ -1,27 +1,27 @@
-import {
-  Component,
-  WebLazyComponent,
-  WebComponent,
-  useAtomixState,
-} from "../lib";
+import { Component, WebComponent, useAtomixState } from "../lib";
 
 const [, setName, subscribeName] = useAtomixState("John");
 
-@WebLazyComponent("atomix-component")
+@WebComponent("atomix-component")
 class MyComponent extends Component {
-  private startedAt = new Date();
+  startedAt: Date | undefined;
+  lazyload: boolean = true;
 
   start() {
     this.logger("start");
+    this.startedAt = new Date();
     this.printDate();
 
-    this.query<HTMLInputElement>("input")?.addEventListener("input", (ev) => {
-      if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
-    });
+    this.querySelector<HTMLInputElement>("input")?.addEventListener(
+      "input",
+      (ev) => {
+        if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
+      }
+    );
 
     this.cycle(() => {
       return subscribeName((name) => {
-        this.query<HTMLInputElement>("input")!.value = name;
+        this.querySelector<HTMLInputElement>("input")!.value = name;
       });
     });
 
@@ -40,8 +40,8 @@ class MyComponent extends Component {
 
   // Custom method
   printDate() {
-    this.query(
+    this.querySelector(
       "span"
-    )!.innerHTML = `(Module started at ${this.startedAt.toISOString()}) The date is: ${new Date()}`;
+    )!.innerHTML = `(Module started at ${this.startedAt?.toISOString()}) The date is: ${new Date()}`;
   }
 }

@@ -20,18 +20,6 @@ class MyComponent extends Component {
 }
 ```
 
-## Attaching a component to a web component
-
-We can attach a component to a web component by using the `attach` method.
-
-```html
-<div id="component">...</div>
-```
-
-```ts
-MyComponent.attach("#component");
-```
-
 ## Framework auto-attach
 
 ### WebComponent decorator
@@ -53,22 +41,28 @@ class MyComponent extends Component {
 <atomix-component>...</atomix-component>
 ```
 
-### WebLazyComponent decorator
+### Lazyload the component
 
-A component can be attached to a web component by using the `WebLazyComponent` decorator.\
-This decorator is used to defer the component's initialization until the web component is on the screen.\
-This is useful for intensive computations components like sliders, 3D models, etc.
+You can lazyload the component by using the `lazyload = true` option in your Component.\
+`start` method will be called when the component is visible on the screen.
 
 ```ts
-import { Component, WebLazyComponent } from "atomixjs";
+import { Component, WebComponent } from "atomixjs";
 
-@WebLazyComponent("atomix-component")
+@WebComponent("atomix-component")
 class MyComponent extends Component {
+  lazyload = true;
+
   start() {
     console.log("start");
   }
 }
 ```
+
+:::caution
+`constructor` and outer states are not lazyloaded.\
+Do not overide the `connectedCallback` and `disconnectedCallback` methods, they are internally used by the framework.
+:::
 
 ```html
 <atomix-component>...</atomix-component>

@@ -1,72 +1,121 @@
 import { type AddCycleFn } from "./cycle";
 
-export class Component<Element extends HTMLElement = HTMLElement> {
-  // Cycles system
-  private _cycles: Array<() => any> = [];
+export const Component = makeAtomixComponent(HTMLElement);
+export type ComponentType = InstanceType<typeof Component>;
 
-  constructor(private el: Element) {}
-
-  // Events
-  onclick?(ev: Event): void;
-  onsubmit?(ev: Event): void;
-  onchange?(ev: Event): void;
-
-  // Cycles
-  cycle(cb: AddCycleFn) {
-    let fn = cb();
-
-    if (fn instanceof Promise) {
-      fn.then((fn) => this._cycles.push(fn));
-    } else {
-      this._cycles.push(fn);
-    }
+export function makeAtomixComponent<
+  Element extends {
+    new (...args: any[]): HTMLElement;
   }
+>(element: Element) {
+  return class extends element {
+    // Cycles system
+    _cycles: Array<() => any> = [];
+    lazyload: boolean = false;
+    loaded: boolean = false;
 
-  clearCycles() {
-    this._cycles.map((cb) => {
-      const res = cb();
-      if (res instanceof Promise) {
-        res.then(() => null);
+    constructor(...args: any[]) {
+      super(...args);
+    }
+
+    connectedCallback() {
+      if (this.lazyload) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                this.initComponent();
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        observer.observe(this);
+
+        return;
       }
-    });
-    this._cycles = [];
-  }
 
-  // TODO: finish this
-  static attach(element: HTMLElement | string) {
-    const el =
-      typeof element === "string"
-        ? document.querySelector<HTMLElement>(element)
-        : element;
-
-    if (!el) {
-      throw new Error(`Element not found: ${element}`);
+      setTimeout(() => this.initComponent(), 1);
     }
 
-    const component = new this(el);
-    component.start?.();
-    return component;
-  }
+    disconnectedCallback() {
+      if (this.loaded) {
+        this.onDestroy?.();
+        this.clearCycles?.();
+      }
+    }
 
-  // Lifecycle
-  start?(): void;
-  onDestroy?(): void;
+    initComponent() {
+      this.loaded = true;
+      this.start?.();
 
-  // Logger methods
-  static logger(...args: any[]) {
-    console.info(`[NOT IMPLEMENTED]`, ...args);
-  }
+      if (this.a_onclick) {
+        this.addEventListener("click", this.a_onclick);
+      }
 
-  logger(...args: any[]) {
-    console.info(`[${this.element.tagName}]`, ...args);
-  }
+      if (this.a_onsubmit) {
+        this.addEventListener("submit", this.a_onsubmit);
+      }
 
-  // Utils methods
-  get element() {
-    return this.el;
-  }
+      if (this.a_onchange) {
+        this.addEventListener("change", this.a_onchange);
+      }
+    }
 
-  query<T extends HTMLElement>(selector: string) {
-    return this.element.querySelector<T>(selector);
-  }
+    // Atomix auto subscribed events
+    a_onclick?(ev: Event): void;
+    a_onsubmit?(ev: Event): void;
+    a_onchange?(ev: Event): void;
+
+    // Cycles
+    cycle(cb: AddCycleFn) {
+      let fn = cb();
+
+      if (fn instanceof Promise) {
+        fn.then((fn) => this._cycles.push(fn));
+      } else {
+        this._cycles.push(fn);
+      }
+    }
+
+    clearCycles() {
+      this._cycles.map((cb) => {
+        const res = cb();
+        if (res instanceof Promise) {
+          res.then(() => null);
+        }
+      });
+      this._cycles = [];
+    }
+
+    // TODO: finish this
+    // static attach(element: HTMLElement | string) {
+    //   const el =
+    //     typeof element === "string"
+    //       ? document.querySelector<HTMLElement>(element)
+    //       : element;
+
+    //   if (!el) {
+    //     throw new Error(`Element not found: ${element}`);
+    //   }
+
+    //   const component = new this();
+    //   component.start?.();
+    //   return component;
+    // }
+
+    // Lifecycle
+    start?(): void;
+    onDestroy?(): void;
+
+    // Logger methods
+    static logger(...args: any[]) {
+      console.info(`[NOT IMPLEMENTED]`, ...args);
+    }
+
+    logger(...args: any[]) {
+      console.info(`[${this.tagName}]`, ...args);
+    }
+  };
 }

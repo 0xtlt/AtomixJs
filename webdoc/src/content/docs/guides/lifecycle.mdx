@@ -17,10 +17,10 @@ Understanding the lifecycle of AtomixJs components is essential for cycleive com
 
 ### Event Handling and Cycles
 
-- **Event Handling**: The component responds to various events like clicks or changes through optional methods such as `onclick`, `onchange`, etc.
+- **Event Handling**: The component responds to various events like clicks or changes through optional methods such as `a_onclick`, `a_onchange`, `a_onsubmit`, etc.
 
   ```ts
-  onclick?(ev: Event): void {
+  a_onclick?(ev: Event): void {
     // Handle click event
   }
   ```
@@ -28,13 +28,9 @@ Understanding the lifecycle of AtomixJs components is essential for cycleive com
 - [**Cycles Management**](../cycle/): The `cycle` and `clearCycles` methods, now protected, are used for managing lifecycle cycles.
 
   ```ts
-  protected cycle(cb: AddCycleFn) {
-    // Adding a custom cycle
-  }
+  cycle(cb: AddCycleFn)
 
-  protected clearCycles() {
-    // Clearing cycles before component destruction
-  }
+  clearCycles()
   ```
 
 ### Component Destruction
