@@ -11,6 +11,7 @@ export function makeAtomixComponent<
   return class extends element {
     // Cycles system
     _cycles: Array<() => any> = [];
+    _namedCycles: Record<string, () => any> = {};
     lazyload: boolean = false;
     loaded: boolean = false;
 
@@ -86,7 +87,36 @@ export function makeAtomixComponent<
           res.then(() => null);
         }
       });
+
+      const keys = Object.keys(this._namedCycles);
+      // unmount named cycles
+      keys.forEach((key) => {
+        const res = this._namedCycles[key]();
+        if (res instanceof Promise) {
+          res.then(() => null);
+        }
+      });
+
       this._cycles = [];
+      this._namedCycles = {};
+    }
+
+    // Named cycles
+    namedCycle(name: string, cb: AddCycleFn) {
+      // unmout previous cycle
+      if (this._namedCycles[name]) {
+        const res = this._namedCycles[name]();
+        if (res instanceof Promise) {
+          res.then(() => null);
+        }
+      }
+      let fn = cb();
+
+      if (fn instanceof Promise) {
+        fn.then((fn) => (this._namedCycles[name] = fn));
+      } else {
+        this._namedCycles[name] = fn;
+      }
     }
 
     // TODO: finish this

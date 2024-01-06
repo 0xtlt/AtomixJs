@@ -1,37 +1,65 @@
 ---
 title: AtomixJs Cycles System
-description: Understanding the Cycles System in AtomixJs Components.
+description: A comprehensive guide to AtomixJs's Cycles System, mirroring React's useEffect for managing side effects.
 ---
 
-The Cycles System in AtomixJs plays a crucial role in managing side effects within components, akin to lifecycle methods in traditional component-based frameworks. It enables the execution of code at specific points in a component's lifecycle, particularly during initialization and cleanup phases.
+## Overview
 
-### Using Cycles in Components
+The Cycles System in AtomixJs is designed to handle side effects within components in a manner similar to React's useEffect hook. It provides a structured approach to manage actions and cleanups throughout the component lifecycle.
 
-#### The Cycle Method
+### Regular Cycles
 
-In AtomixJs, the `cycle` method is an integral part of a component's lifecycle management. It allows developers to define functions that are executed during different lifecycle stages of a component. These functions can optionally return a cleanup function, which is invoked when the component is being destroyed, ensuring efficient resource management.
+Regular cycles in AtomixJs resemble React's useEffect, focusing on handling side effects like setting up intervals or timeouts.
 
-#### Clearing Cycles
-
-AtomixJs also includes functionality to clear all cycles associated with a component. This is vital for preventing memory leaks and ensuring that no residual effects persist after a component has been removed.
-
-### Example Usage
-
-Here's an example that demonstrates the use of a cycle in a component with `setInterval`:
+**Example: Regular Cycle with Interval**
 
 ```ts
-class MyComponent extends Component {
+class IntervalComponent extends Component {
   start() {
     this.cycle(() => {
       const intervalId = setInterval(() => {
         console.log("Interval tick");
       }, 1000);
 
-      return () => {
-        clearInterval(intervalId);
-        console.log("Interval cleared on component destruction");
-      };
+      // Cleanup function for clearing the interval
+      return () => clearInterval(intervalId);
     });
   }
 }
 ```
+
+In this example, `IntervalComponent` uses a regular cycle to set up an interval that logs a message every second. The cleanup function, which clears the interval, is similar to the cleanup function in React's useEffect.
+
+### Named Cycles
+
+Named cycles offer more control by allowing individual management of cycles. They are ideal for handling multiple, distinct side effects within the same component.
+
+**Example: Named Cycle with Timeout**
+
+```ts
+class TimeoutComponent extends Component {
+  start() {
+    this.addEventListener("click", this.handleButtonClick);
+  }
+
+  handleButtonClick = () => {
+    // Launch or reset the named cycle 'displayAction'
+    this.namedCycle("displayAction", this.displayActionCycle);
+  };
+
+  displayActionCycle = () => {
+    let timeoutId = setTimeout(() => {
+      console.log("Action displayed after 5 seconds");
+    }, 5000);
+
+    // Cleanup function to cancel the timeout
+    return () => clearTimeout(timeoutId);
+  };
+}
+```
+
+In `TimeoutComponent`, each click initiates or resets the named cycle `displayAction`, setting a 5-second timeout. If clicked again within 5 seconds, the previous timeout is cancelled. This example shows how to manage delayed actions effectively.
+
+### Conclusion
+
+AtomixJs's Cycles System, akin to React's useEffect, offers a robust framework for handling side effects in components. Regular and named cycles provide flexible options for different use cases.
