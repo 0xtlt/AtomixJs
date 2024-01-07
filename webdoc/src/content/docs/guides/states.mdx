@@ -26,7 +26,13 @@ export function useAtomixBrowserState<Type>(
   key: string,
   initialValue: Type,
   storageType: StorageType
-);
+): {
+  readonly get: () => Type;
+  readonly set: (newValue: Type) => void;
+  readonly subscribe: (
+    cb: (value: Type, oldValue: Type) => void | Promise<void>
+  ) => () => void;
+};
 ```
 
 - `key`: The key for storing the state.
@@ -44,7 +50,7 @@ export function useAtomixBrowserState<Type>(
 Below is an example demonstrating how to use `useAtomixState` in a component:
 
 ```typescript
-const [getName, setName, subscribeName] = useAtomixState("John");
+const { set: setName, subscribe: subscribeName } = useAtomixState("John");
 
 @WebComponent("atomix-component")
 class MyComponent2 extends Component {
@@ -53,10 +59,8 @@ class MyComponent2 extends Component {
       if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
     });
 
-    this.cycle(() => {
-      return subscribeName((name) => {
-        this.query<HTMLInputElement>("input")!.value = name;
-      });
+    this.stateSubscribe(subscribeName, (name) => {
+      this.querySelector<HTMLInputElement>("input")!.value = name;
     });
   }
 }
