@@ -69,6 +69,15 @@ export function makeAtomixComponent<
     a_onsubmit?(ev: Event): void;
     a_onchange?(ev: Event): void;
 
+    stateSubscribe<Type>(
+      stateSubscribeCallback: (
+        cb: (value: Type, oldValue: Type) => void | Promise<void>
+      ) => () => void,
+      callback: (value: Type, oldValue: Type) => void | Promise<void>
+    ) {
+      this.cycle(() => stateSubscribeCallback(callback));
+    }
+
     // Cycles
     cycle(cb: AddCycleFn) {
       let fn = cb();

@@ -1,6 +1,6 @@
 import { Component, WebComponent, useAtomixState } from "../lib";
 
-const [, setName, subscribeName] = useAtomixState("John");
+const { set: setName, subscribe: subscribeName } = useAtomixState("John");
 
 @WebComponent("atomix-component")
 class MyComponent extends Component {
@@ -23,6 +23,10 @@ class MyComponent extends Component {
       return subscribeName((name) => {
         this.querySelector<HTMLInputElement>("input")!.value = name;
       });
+    });
+    // OR
+    this.stateSubscribe(subscribeName, (name) => {
+      this.querySelector<HTMLInputElement>("input")!.value = name;
     });
 
     this.cycle(async () => {

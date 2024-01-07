@@ -6,7 +6,7 @@ export type StorageType = "local" | "session" | "ram";
  * @param initialValue - The initial value of the state.
  * @param key - Optional key for storing the state in localStorage or sessionStorage.
  * @param storageType - Defines where the state is stored: in RAM, localStorage, or sessionStorage.
- * @returns A tuple containing functions to get and set the state, and to subscribe to state changes.
+ * @returns An object containing functions to get and set the state, and to subscribe to state changes.
  */
 function createAtomixState<Type>(
   initialValue: Type,
@@ -68,18 +68,16 @@ function createAtomixState<Type>(
     };
   };
 
-  return [getValue, setValue, subscribe] as const;
+  return { get: getValue, set: setValue, subscribe } as const;
 }
 
 /**
  * Hook for using state managed by createAtomixState in memory.
  * @param initialValue - The initial value of the state.
- * @returns A tuple containing functions to get and set the state, and to subscribe to state changes.
+ * @returns An object containing functions to get and set the state, and to subscribe to state changes.
  */
 export function useAtomixState<Type>(initialValue: Type) {
-  const [getValue, setValue, subscribe] = createAtomixState(initialValue);
-
-  return [getValue, setValue, subscribe] as const;
+  return createAtomixState(initialValue);
 }
 
 /**
@@ -94,11 +92,5 @@ export function useAtomixBrowserState<Type>(
   initialValue: Type,
   storageType: StorageType
 ) {
-  const [getValue, setValue, subscribe] = createAtomixState(
-    initialValue,
-    key,
-    storageType
-  );
-
-  return [getValue, setValue, subscribe] as const;
+  return createAtomixState(initialValue, key, storageType);
 }
