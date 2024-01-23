@@ -1,4 +1,10 @@
-import { Component, WebComponent, useAtomixState } from "../lib";
+import {
+  Component,
+  WebComponent,
+  dataset,
+  query,
+  useAtomixState,
+} from "../lib";
 
 const { set: setName, subscribe: subscribeName } = useAtomixState("John");
 
@@ -7,8 +13,14 @@ class MyComponent extends Component {
   startedAt: Date | undefined;
   lazyload: boolean = true;
 
+  @dataset("name")
+  name = "Thomas";
+
+  @query("input")
+  input: HTMLInputElement | null = null;
+
   start() {
-    this.logger("start");
+    this.logger("start", this.name, this.input);
     this.startedAt = new Date();
     this.printDate();
 
@@ -20,11 +32,12 @@ class MyComponent extends Component {
     );
 
     this.cycle(() => {
-      return subscribeName((name) => {
-        this.querySelector<HTMLInputElement>("input")!.value = name;
+      return subscribeName((inputName) => {
+        this.name = inputName;
+        this.querySelector<HTMLInputElement>("input")!.value = inputName;
       });
     });
-    // OR
+    // OR BETTER
     this.stateSubscribe(subscribeName, (name) => {
       this.querySelector<HTMLInputElement>("input")!.value = name;
     });

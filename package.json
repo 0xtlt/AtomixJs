@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "bun build lib.ts --outfile=lib.js --target=browser --minify-whitespace --minify-identifiers --minify-syntax --sourcemap=inline",
-    "dev": "bun build index.ts --outfile=d.js --target=browser --sourcemap=inline --watch",
+    "dev": "bun build lib.ts --outfile=d.js --target=browser --sourcemap=inline --watch",
     "buildExample": "bun build ./examples/script.ts --outfile=examples/script.js --target=browser --minify-whitespace --minify-identifiers --minify-syntax --sourcemap=inline"
   },
   "devDependencies": {
@@ -14,6 +14,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {}
+  }
 }

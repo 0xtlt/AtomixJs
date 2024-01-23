@@ -26,6 +26,7 @@ export function makeAtomixComponent<
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 this.initComponent();
+                observer.unobserve(this);
               }
             });
           },
