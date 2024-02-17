@@ -1,26 +1,16 @@
-import {
-  Component,
-  WebComponent,
-  dataset,
-  query,
-  useAtomixState,
-} from "../lib";
+import { AHTMLElement, useAtomixState } from "../lib";
 
 const { set: setName, subscribe: subscribeName } = useAtomixState("John");
 
-@WebComponent("atomix-component")
-class MyComponent extends Component {
-  startedAt: Date | undefined;
+class MyComponent extends AHTMLElement {
   lazyload: boolean = true;
 
-  @dataset("name")
-  name = "Thomas";
+  startedAt: Date | undefined;
 
-  @query("input")
-  input: HTMLInputElement | null = null;
+  input = this.querySelector("input");
 
   start() {
-    this.logger("start", this.name, this.input);
+    this.logger("start", this.dataset.name, this.input);
     this.startedAt = new Date();
     this.printDate();
 
@@ -33,7 +23,7 @@ class MyComponent extends Component {
 
     this.cycle(() => {
       return subscribeName((inputName) => {
-        this.name = inputName;
+        this.dataset.name = inputName;
         this.querySelector<HTMLInputElement>("input")!.value = inputName;
       });
     });
@@ -62,3 +52,5 @@ class MyComponent extends Component {
     )!.innerHTML = `(Module started at ${this.startedAt?.toISOString()}) The date is: ${new Date()}`;
   }
 }
+
+customElements.define("atomix-component", MyComponent);
