@@ -112,6 +112,31 @@ export function makeAtomixComponent<
       }
     }
 
+    // Auto cycled events
+    on<K extends keyof HTMLElementEventMap>(
+      type: K,
+      listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions
+    ) {
+      this.cycle(() => {
+        this.addEventListener(type, listener, options);
+        return () => this.removeEventListener(type, listener, options);
+      });
+    }
+
+    onElement<K extends keyof HTMLElementEventMap>(
+      element: HTMLElement | Document | Window,
+      type: K,
+      listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions
+    ) {
+      this.cycle(() => {
+        element.addEventListener(type, listener as any, options);
+        return () =>
+          element.removeEventListener(type, listener as any, options);
+      });
+    }
+
     // Lifecycle
     start?(): void;
     onDestroy?(): void;
