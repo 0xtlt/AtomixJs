@@ -25,8 +25,8 @@ export function makeAtomixComponent<
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
-                this.initComponent();
                 observer.unobserve(this);
+                this.initComponent();
               }
             });
           },
@@ -45,10 +45,13 @@ export function makeAtomixComponent<
       if (this.loaded) {
         this.onDestroy?.();
         this.clearCycles?.();
+        this.loaded = false;
       }
     }
 
     initComponent() {
+      if(this.loaded) return;
+
       this.loaded = true;
       this.onStart?.();
     }
