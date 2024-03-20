@@ -15,7 +15,7 @@ Regular cycles in AtomixJs resemble React's useEffect, focusing on handling side
 
 ```ts
 class IntervalComponent extends Component {
-  start() {
+  onStart() {
     this.cycle(() => {
       const intervalId = setInterval(() => {
         console.log("Interval tick");
@@ -38,7 +38,7 @@ Named cycles offer more control by allowing individual management of cycles. The
 
 ```ts
 class TimeoutComponent extends Component {
-  start() {
+  onStart() {
     this.addEventListener("click", this.handleButtonClick);
   }
 

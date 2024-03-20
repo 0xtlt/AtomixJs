@@ -1,73 +1,62 @@
 ---
-title: AtomixJs component
-description: AtomixJs component documentation.
+title: AtomixJs Component
+description: Explore the core functionalities of AtomixJs components for enhancing web applications.
 ---
 
-AtomixJs components are like react components with lifecycle methods. They are used to create reusable UI elements and they are lightweight (_less than 1kb_).
+AtomixJs offers a streamlined approach to enhancing web components by focusing on adding functionality without altering the underlying structure. Unlike other libraries that may overlay additional layers onto web components, AtomixJs acts more as a facilitator of functionality, akin to traditional JavaScript but with the benefits of modular encapsulation.
 
-## Creating a component
+## Understanding Components in AtomixJs
 
-We can create a component by extending the `Component` class and implementing the `start` method.\
-This method is called when the component is mounted during the first render in the Component's lifecycle.
+In AtomixJs, a component is a mechanism for adding behavior to existing HTML elements without changing their appearance. This design philosophy ensures that AtomixJs seamlessly integrates with your application, enhancing functionality without imposing changes to your structural conventions.
+
+## Key Features of AtomixJs Components
+
+- **Behavior Enhancement**: AtomixJs components are primarily used to extend the capabilities of standard HTML elements with additional JavaScript functionality.
+- **Lazy Loading**: Components can be set to lazy load with the `lazyload` property, initializing only when visible in the viewport, thus optimizing performance.
+- **Custom Component Creation**: AtomixJs allows for the creation of custom components through `makeAtomixComponent`, enabling developers to encapsulate and manage behavior in a modular way.
+
+## Lazy Loading for Performance Optimization
+
+Lazy loading is a technique that delays the loading and initialization of components until they are actually needed, which is typically when they become visible in the viewport. In AtomixJs, the `lazyload` property controls this behavior.
+
+### Default Behavior
+
+By default, the `lazyload` property is set to `false`, meaning that components will be initialized immediately when added to the DOM. This is suitable for elements that need to be interactive or visible from the start.
+
+### Recommended Usage
+
+For optimal performance, especially in applications with many components or heavy resources, it is recommended to set `lazyload` to `true`. This ensures that components are only initialized when they are about to enter the viewport, reducing initial load times and improving the user experience.
+
+### Example: Implementing Lazy Loading
+
+Here's how to implement lazy loading in a custom AtomixJs component:
 
 ```ts
-import { Component } from "atomixjs";
+import { AHTMLElement, makeAtomixComponent } from "atomixjs";
 
-class MyComponent extends Component {
-  start() {
-    console.log("start");
+class MyLazyComponent extends AHTMLElement {
+  lazyload: boolean = true; // Enable lazy loading
+
+  onStart() {
+    console.log("Component is now visible and has been initialized");
+    // Initialization code here
   }
 }
+
+const LazyComponent = makeAtomixComponent(MyLazyComponent);
+customElements.define("lazy-component", LazyComponent);
 ```
 
-## Framework auto-attach
+### Usage in HTML
 
-### WebComponent decorator
-
-A component can be attached to a web component by using the `WebComponent` decorator.
-
-```ts
-import { Component, WebComponent } from "atomixjs";
-
-@WebComponent("atomix-component")
-class MyComponent extends Component {
-  start() {
-    console.log("start");
-  }
-}
-```
+Once defined, you can use your lazy-loaded component like any other web component. It will automatically initialize when it comes into view:
 
 ```html
-<atomix-component>...</atomix-component>
+<lazy-component></lazy-component>
 ```
 
-### Lazyload the component
+## Summary
 
-You can lazyload the component by using the `lazyload = true` option in your Component.\
-`start` method will be called when the component is visible on the screen.
+Lazy loading is a powerful feature in AtomixJs that enhances application performance by delaying the initialization of components until necessary. By setting `lazyload` to `true`, developers can ensure that resources are used efficiently, leading to faster page loads and a smoother user experience. AtomixJs's approach to component development, focusing on behavior enhancement without altering appearance, makes it an invaluable tool for modern web development.
 
-```ts
-import { Component, WebComponent } from "atomixjs";
-
-@WebComponent("atomix-component")
-class MyComponent extends Component {
-  lazyload = true;
-
-  start() {
-    console.log("start");
-  }
-}
-```
-
-:::caution
-`constructor` and outer states are not lazyloaded.\
-Do not overide the `connectedCallback` and `disconnectedCallback` methods, they are internally used by the framework.
-:::
-
-```html
-<atomix-component>...</atomix-component>
-```
-
-:::danger
-This component should never be used if your component needs to be attached to a web component that is not on the screen.
-:::
+Stay tuned for further guides on leveraging AtomixJs to its full potential.

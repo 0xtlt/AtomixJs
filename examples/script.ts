@@ -9,7 +9,7 @@ class MyComponent extends AHTMLElement {
 
   input = this.querySelector("input");
 
-  start() {
+  onStart() {
     this.logger("start", this.dataset.name, this.input);
     this.startedAt = new Date();
     this.printDate();

@@ -50,7 +50,7 @@ export function makeAtomixComponent<
 
     initComponent() {
       this.loaded = true;
-      this.start?.();
+      this.onStart?.();
     }
 
     stateSubscribe<Type>(
@@ -138,7 +138,7 @@ export function makeAtomixComponent<
     }
 
     // Lifecycle
-    start?(): void;
+    onStart?(): void;
     onDestroy?(): void;
 
     logger(...args: any[]) {

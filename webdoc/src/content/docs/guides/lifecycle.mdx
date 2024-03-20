@@ -3,42 +3,64 @@ title: AtomixJs Component Lifecycle
 description: Detailed documentation on the lifecycle of AtomixJs components.
 ---
 
-Understanding the lifecycle of AtomixJs components is essential for cycleive component management, from initialization to destruction.
+Understanding the lifecycle of AtomixJs components is essential for effective component management, from initialization to destruction. This guide outlines the key lifecycle methods provided by AtomixJs, enabling developers to hook into the component lifecycle for precise control over their components.
 
-### Component Initialization
+## Component Initialization
 
-1. **Start Method**: The `start` method is invoked after the component is attached to the DOM. This is where you typically set up the initial state, bind event handlers, and perform initial actions such as fetching data or setting up listeners.
+When a component is added to the DOM, AtomixJs facilitates its initialization through the `start` method. This method serves as the entry point for setting up the initial state, binding event handlers, and executing any preliminary actions such as fetching data or establishing listeners.
 
-   ```ts
-   start?(): void {
-     // Initial setup and actions when the component starts
-   }
-   ```
+### Start Method
 
-### Event Handling and Cycles
+The `start` method is called after the component is attached to the DOM. It's an ideal place to initialize the component, set up state, and perform any actions that should occur when the component first loads.
 
-- **Event Handling**: The component responds to various events like clicks or changes through optional methods such as `a_onclick`, `a_onchange`, `a_onsubmit`, etc.
-
-  ```ts
-  a_onclick?(ev: Event): void {
-    // Handle click event
+```ts
+class MyComponent extends AHTMLElement {
+  onStart() {
+    console.log("Component has been attached and started");
+    // Setup event listeners or fetch initial data here
   }
-  ```
+}
+```
 
-- [**Cycles Management**](../cycle/): The `cycle` and `clearCycles` methods, now protected, are used for managing lifecycle cycles.
+## Cycles
 
-  ```ts
-  cycle(cb: AddCycleFn)
+AtomixJs introduces a concept of cycles for managing component lifecycle events and cleanup operations. The `cycle` and `clearCycles` methods allow for the registration and deregistration of lifecycle events and actions, ensuring that components can efficiently manage resources and event listeners throughout their lifecycle.
 
-  clearCycles()
-  ```
+### Cycles Management
 
-### Component Destruction
+Cycles are used to manage tasks that need to occur at specific points in the component's lifecycle, such as setting up and tearing down event listeners or other recurring tasks. The `cycle` method is used to register these tasks, and `clearCycles` is called to clean them up.
 
-1. **Cleanup (`onDestroy`)**: This method is invoked before the component is destroyed, ideal for cleanup and resource management.
+```ts
+class MyComponent extends AHTMLElement {
+  onStart() {
+    this.cycle(() => {
+      const timer = setInterval(() => console.log("Timer tick"), 1000);
+      return () => clearInterval(timer);
+    });
+  }
 
-   ```ts
-   onDestroy?(): void {
-     // Cleanup logic
-   }
-   ```
+  onDestroy() {
+    // The clearInterval for the timer is automatically called
+    console.log("Component is being destroyed");
+  }
+}
+```
+
+## Component Destruction
+
+Component cleanup is an essential part of the lifecycle, ensuring that components can be destroyed without leaving behind any lingering effects or resource leaks. AtomixJs provides the `onDestroy` method for this purpose, which is called before the component is removed from the DOM.
+
+### Cleanup (`onDestroy`)
+
+The `onDestroy` method is intended for cleaning up any resources the component has used, such as event listeners, intervals, or external data subscriptions. This method ensures that the component can be safely destroyed without impacting the broader application.
+
+```ts
+class MyComponent extends AHTMLElement {
+  onDestroy() {
+    console.log("Cleanup logic before the component is destroyed");
+    // Perform cleanup, such as removing event listeners
+  }
+}
+```
+
+Understanding and utilizing the lifecycle methods of AtomixJs components allow developers to create efficient, reliable, and maintainable components. By leveraging these lifecycle hooks, you can ensure that your components are well-prepared for initialization, capable of managing dynamic resources throughout their existence, and cleanly removed when no longer needed.

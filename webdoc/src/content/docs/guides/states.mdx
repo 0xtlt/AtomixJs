@@ -54,7 +54,7 @@ const { set: setName, subscribe: subscribeName } = useAtomixState("John");
 
 @WebComponent("atomix-component")
 class MyComponent2 extends Component {
-  start() {
+  onStart() {
     this.query<HTMLInputElement>("input")?.addEventListener("input", (ev) => {
       if (ev.target instanceof HTMLInputElement) setName(ev.target?.value);
     });
