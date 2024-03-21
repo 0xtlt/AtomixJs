@@ -127,10 +127,10 @@ export function makeAtomixComponent<
       });
     }
 
-    onElement<K extends keyof HTMLElementEventMap>(
+    onElement<K extends keyof HTMLElementEventMap | string>(
       element: HTMLElement | Document | Window,
       type: K,
-      listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+      listener: K extends keyof HTMLElementEventMap ? (this: HTMLElement, ev: HTMLElementEventMap[K]) => any : (this: HTMLElement, ev: unknown) => any,
       options?: boolean | AddEventListenerOptions
     ) {
       this.cycle(() => {
