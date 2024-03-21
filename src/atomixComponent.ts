@@ -116,6 +116,18 @@ export function makeAtomixComponent<
     }
 
     // Auto cycled events
+    on<K extends keyof HTMLElementEventMap>(
+      type: K,
+      listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions
+    ): void;
+    
+    on(
+      type: string,
+      listener: (this: HTMLElement, ev: CustomEvent) => any,
+      options?: boolean | AddEventListenerOptions
+    ): void;
+    
     on<K extends keyof HTMLElementEventMap | string>(
       type: K,
       listener: (this: HTMLElement, ev: K extends keyof HTMLElementEventMap ? HTMLElementEventMap[K] : CustomEvent) => any,
@@ -126,7 +138,21 @@ export function makeAtomixComponent<
         return () => this.removeEventListener(type, listener as EventListener, options);
       });
     }
-
+    
+    onElement<K extends keyof HTMLElementEventMap>(
+      element: HTMLElement | Document | Window,
+      type: K,
+      listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions
+    ): void;
+    
+    onElement(
+      element: HTMLElement | Document | Window,
+      type: string,
+      listener: (this: HTMLElement, ev: CustomEvent) => any,
+      options?: boolean | AddEventListenerOptions
+    ): void;
+    
     onElement<K extends keyof HTMLElementEventMap | string>(
       element: HTMLElement | Document | Window,
       type: K,
@@ -135,8 +161,7 @@ export function makeAtomixComponent<
     ) {
       this.cycle(() => {
         element.addEventListener(type, listener as EventListener, options);
-        return () =>
-          element.removeEventListener(type, listener as EventListener, options);
+        return () => element.removeEventListener(type, listener as EventListener, options);
       });
     }
 
