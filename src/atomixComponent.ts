@@ -5,7 +5,8 @@ export type ComponentType = InstanceType<typeof AHTMLElement>;
 
 export function makeAtomixComponent<
 	Element extends {
-		new (...args: unknown[]): HTMLElement;
+		// biome-ignore lint/suspicious/noExplicitAny: because we simply don't know
+		new (...args: any[]): HTMLElement;
 	},
 >(element: Element) {
 	return class extends element {
@@ -177,49 +178,49 @@ export function makeAtomixComponent<
 		onDestroy?(): void;
 
 		// Helpers
-		// _attribute(name: string): string;
-		// _attribute(name: string, type: "string"): string;
-		// _attribute(name: string, type: "number"): number;
-		// _attribute(name: string, type: "boolean"): boolean;
-		// _attribute(name: string, type: "string", canBeNull: true): string | null;
-		// _attribute(name: string, type: "number", canBeNull: true): number | null;
-		// _attribute(name: string, type: "boolean", canBeNull: true): boolean | null;
-		// _attribute(name: string, type: "string", canBeNull: false): string;
-		// _attribute(name: string, type: "number", canBeNull: false): number;
-		// _attribute(name: string, type: "boolean", canBeNull: false): boolean;
+		_attribute(name: string): string;
+		_attribute(name: string, type: "string"): string;
+		_attribute(name: string, type: "number"): number;
+		_attribute(name: string, type: "boolean"): boolean;
+		_attribute(name: string, type: "string", canBeNull: true): string | null;
+		_attribute(name: string, type: "number", canBeNull: true): number | null;
+		_attribute(name: string, type: "boolean", canBeNull: true): boolean | null;
+		_attribute(name: string, type: "string", canBeNull: false): string;
+		_attribute(name: string, type: "number", canBeNull: false): number;
+		_attribute(name: string, type: "boolean", canBeNull: false): boolean;
 
-		// // Implementation of _attribute
-		// _attribute(
-		// 	name: string,
-		// 	type: "string" | "number" | "boolean" = "string",
-		// 	canBeNull?: boolean,
-		// ): string | number | boolean | null {
-		// 	const value = this.getAttribute(name);
+		// Implementation of _attribute
+		_attribute(
+			name: string,
+			type: "string" | "number" | "boolean" = "string",
+			canBeNull?: boolean,
+		): string | number | boolean | null {
+			const value = this.getAttribute(name);
 
-		// 	if (value === null) {
-		// 		if (canBeNull === true) return null;
-		// 		throw new Error(`Attribute "${name}" is required but not present`);
-		// 	}
+			if (value === null) {
+				if (canBeNull === true) return null;
+				throw new Error(`Attribute "${name}" is required but not present`);
+			}
 
-		// 	switch (type) {
-		// 		case "string": {
-		// 			return value;
-		// 		}
-		// 		case "number": {
-		// 			const num = Number.parseFloat(value);
-		// 			if (Number.isNaN(num)) {
-		// 				throw new Error(`Attribute "${name}" is not a valid number`);
-		// 			}
-		// 			return num;
-		// 		}
-		// 		case "boolean": {
-		// 			return value.toLowerCase() === "true";
-		// 		}
-		// 		default: {
-		// 			throw new Error(`Invalid attribute type: ${type}`);
-		// 		}
-		// 	}
-		// }
+			switch (type) {
+				case "string": {
+					return value;
+				}
+				case "number": {
+					const num = Number.parseFloat(value);
+					if (Number.isNaN(num)) {
+						throw new Error(`Attribute "${name}" is not a valid number`);
+					}
+					return num;
+				}
+				case "boolean": {
+					return value.toLowerCase() === "true";
+				}
+				default: {
+					throw new Error(`Invalid attribute type: ${type}`);
+				}
+			}
+		}
 
 		logger(...args: unknown[]) {
 			console.info(`[${this.tagName}]`, ...args);
