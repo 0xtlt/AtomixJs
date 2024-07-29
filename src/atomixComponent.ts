@@ -16,7 +16,7 @@ export function makeAtomixComponent<
 		#loaded = false;
 
 		connectedCallback() {
-			if (!this.getAttribute("client:load")) {
+			if (this.getAttribute("client:load") === null) {
 				const observer = new IntersectionObserver(
 					(entries) => {
 						for (const entry of entries) {
