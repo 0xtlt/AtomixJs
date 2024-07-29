@@ -46,9 +46,6 @@ export function makeAtomixComponent<
 		}
 
 		initComponent() {
-			console.log("debug", this, {
-				loaded: this.#loaded,
-			});
 			if (this.#loaded) return;
 
 			this.#loaded = true;
